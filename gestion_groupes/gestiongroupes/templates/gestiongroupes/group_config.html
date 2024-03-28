@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Configuration des groupes</h1>
+    <form action="" method="post">
+        {% csrf_token %}
+        <label for="users_count">Nombre max. d'utilisateurs</label>
+        <input type="number" name="user_count" id="users_count">
+        <label for="groups_count">Nombre max. de groupes</label>
+        <input type="number" name="groups_count" id="groups_count">
+        <fieldset>
+            <legend>Configuration du dernier groupe</legend>
+            <input type="radio" name="last_min" id="last_min">
+            <label for="last_min">Plus petit</label>
+            <input type="radio" name="last_max" id="last_max">
+            <label for="last_max">Plus grand</label>
+        </fieldset>
+    </form>
+{% endblock %}
+

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Utilisateurs sans groupes</h1>
+    <div>
+        <button>Créer un groupe</button>
+        <button>J'ai de la chance</button>
+    </div>
+    <ul>
+        {% for user in users %}
+            <li>{{ user }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
