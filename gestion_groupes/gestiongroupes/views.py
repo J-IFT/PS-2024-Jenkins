@@ -1,8 +1,22 @@
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
+
+from .forms import ConnectionForm
 
 
 def index(request):
-    return render(request, 'gestiongroupes/index.html')
+    if request.method == 'POST':
+        form = ConnectionForm(request.POST)
+        if form.is_valid():
+            if form.cleaned_data['username'] == 'admin':
+                return HttpResponseRedirect('/config/')
+
+            return HttpResponseRedirect("/liste/")
+
+    else:
+        form = ConnectionForm()
+
+    return render(request, 'gestiongroupes/index.html', {"form": form})
 
 
 def users_list(request):
