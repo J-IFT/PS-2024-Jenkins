@@ -5,16 +5,20 @@ from .forms import ConnectionForm
 
 
 def index(request):
+    if request.session.get('username'):
+        return HttpResponseRedirect('/liste/')
+
     if request.method == 'POST':
         form = ConnectionForm(request.POST)
         if form.is_valid():
-            if form.cleaned_data['username'] == 'admin':
+            username = form.cleaned_data['username']
+            request.session['username'] = username
+            if username == 'admin':
                 return HttpResponseRedirect('/config/')
 
-            return HttpResponseRedirect("/liste/")
+            return HttpResponseRedirect('/liste/')
 
-    else:
-        form = ConnectionForm()
+    form = ConnectionForm()
 
     return render(request, 'gestiongroupes/index.html', {"form": form})
 
