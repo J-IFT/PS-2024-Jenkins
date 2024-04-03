@@ -1,7 +1,8 @@
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 
 from .forms import ConnectionForm, GroupConfigForm
+from .models import GroupConfig
 
 
 def index(request):
@@ -29,13 +30,24 @@ def users_list(request):
 
 
 def group_config(request):
+    try:
+        config = GroupConfig.objects.get(pk=1)
+    except GroupConfig.DoesNotExist:
+        config = GroupConfig()
+
+    form = GroupConfigForm()
+    form.fields['max_users'].initial = config.max_users
+    form.fields['max_groups'].initial = config.max_groups
+    form.fields['last_group'].initial = config.last_group
+
     if request.method == 'POST':
         form = GroupConfigForm(request.POST)
 
         if form.is_valid():
-            return HttpResponseRedirect('/config/')
-
-    form = GroupConfigForm()
+            config.max_users = request.POST['max_users']
+            config.max_groups = request.POST['max_groups']
+            config.last_group = request.POST['last_group']
+            config.save()
 
     return render(request, 'gestiongroupes/group_config.html', {"form": form})
 
