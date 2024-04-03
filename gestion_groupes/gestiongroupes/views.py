@@ -1,7 +1,7 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
-from .forms import ConnectionForm
+from .forms import ConnectionForm, GroupConfigForm
 
 
 def index(request):
@@ -29,7 +29,15 @@ def users_list(request):
 
 
 def group_config(request):
-    return render(request, 'gestiongroupes/group_config.html')
+    if request.method == 'POST':
+        form = GroupConfigForm(request.POST)
+
+        if form.is_valid():
+            return HttpResponseRedirect('/config/')
+
+    form = GroupConfigForm()
+
+    return render(request, 'gestiongroupes/group_config.html', {"form": form})
 
 
 def group_details(request, group_id):
