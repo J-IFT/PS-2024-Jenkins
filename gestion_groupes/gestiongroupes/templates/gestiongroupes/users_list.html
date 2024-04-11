@@ -5,6 +5,9 @@
     <div>
         <button>Créer un groupe</button>
         <button>J'ai de la chance</button>
+        {% if request.session.username == 'admin' %}
+            <a href="/config/" class="button">Configurer les groupes</a>
+        {% endif %}
     </div>
     <ul>
         {% for user in users %}
