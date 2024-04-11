@@ -1,17 +1,49 @@
 /* styles.css */
+/* Variables */
+:root {
+    /* Tailles de police */
+    --text-size-small: clamp(0.8333rem, 0.7488rem + 0.4228vi, 1.05rem);
+    --text-size-base: clamp(1rem, 0.878rem + 0.6098vi, 1.3125rem);
+    --text-size-heading-4: clamp(1.44rem, 1.2016rem + 1.1918vi, 2.0508rem);
+    --text-size-heading-3: clamp(1.728rem, 1.402rem + 1.6302vi, 2.5635rem);
+    --text-size-heading-2: clamp(2.0736rem, 1.6323rem + 2.2063vi, 3.2043rem);
+    --text-size-heading-1: clamp(2.4883rem, 1.8963rem + 2.9602vi, 4.0054rem);
+
+    /* Espaces */
+    --space-xs: clamp(0.75rem, 0.6524rem + 0.4878vi, 1rem);
+    --space-s: clamp(1rem, 0.878rem + 0.6098vi, 1.3125rem);
+    --space-m: clamp(1.5rem, 1.3049rem + 0.9756vi, 2rem);
+    --space-l: clamp(2rem, 1.7561rem + 1.2195vi, 2.625rem);
+    --space-xl: clamp(3rem, 2.6341rem + 1.8293vi, 3.9375rem);
+
+    /* Lettrage */
+    --ff-primary: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;
+    --leading: 1.5;
+
+    /* Couleurs */
+    --clr-text: #4c4f69;
+    --clr-base: #eff1f5;
+    --clr-surface: #f5f7fc;
+    --clr-primary: deeppink;
+    --clr-primary-interact: #e01f8d;
+    --clr-error: red;
+    --clr-success: lime;
+
+}
 
 /* Style général */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 0;
+    font-family: var(--ff-primary);
+    font-size: var(--text-size-base);
+    line-height: var(--leading);
+    background-color: var(--clr-base);
+    color: var(--clr-text);
 }
 
 .container {
     max-width: 400px;
     margin: 0 auto;
-    padding: 20px;
+    padding: var(--space-m);
 }
 
 h1 {
@@ -19,33 +51,32 @@ h1 {
 }
 
 form {
-    background-color: #ffffff;
-    padding: 20px;
+    background-color: var(--clr-surface);
+    padding: var(--space-s);
     border-radius: 5px;
-    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
 }
 
 input[type="text"],
 input[type="password"] {
     width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
+    padding: var(--space-xs);
+    margin-bottom: var(--space-s);
+    border: 1px solid var(--clr-surface);
     border-radius: 5px;
 }
 
-input[type="submit"] {
+button[type="submit"] {
     width: 100%;
-    padding: 10px;
-    background-color: deeppink;
-    color: #ffffff;
+    padding: var(--space-xs);
+    background-color: var(--clr-primary);
     border: none;
     border-radius: 5px;
     cursor: pointer;
 }
 
-input[type="submit"]:hover {
-    background-color: hotpink;
+button[type="submit"]:hover {
+    background-color: var(--clr-primary-interact);
 }
 
 /* Responsive design */
