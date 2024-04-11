@@ -32,6 +32,10 @@ def index(request):
 
 
 def users_list(request):
+    if request.method == 'POST':
+        join_id = request.POST['join_id']
+        return redirect('group_details', join_id)
+
     context = {'users': ['Alice', 'Bob', 'Charlie']}
     return render(request, 'gestiongroupes/users_list.html', context)
 

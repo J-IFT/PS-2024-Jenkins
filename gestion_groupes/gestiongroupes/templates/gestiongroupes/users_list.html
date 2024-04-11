@@ -4,7 +4,14 @@
     <h1>Utilisateurs sans groupes</h1>
     <div>
         <a href="/creer-groupe/" class="button">Créer un groupe</a>
-        <button>J'ai de la chance</button>
+
+        <form action="/liste/" method="post">
+            {% csrf_token %}
+            <input type="number" name="join_id" id="join_id">
+
+            <button type="submit">Rejoindre le groupe</button>
+        </form>
+
         {% if request.session.username == 'admin' %}
             <a href="/config/" class="button">Configurer les groupes</a>
         {% endif %}
