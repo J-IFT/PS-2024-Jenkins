@@ -8,6 +8,22 @@ from .forms import ConnectionForm, GroupConfigForm
 from .models import GroupConfig
 
 
+def get_group_sizes(max_users, max_groups, last_group):
+    base_size = max_users // max_groups
+    remainder = max_users % max_groups
+
+    last_group_size = base_size + remainder
+
+    # Le résultat correspond à la demande MAIS pas à l'exemple donné par le prof :
+    # Si la configuration vaut LAST_MAX, le dernier groupe a plus d’utilisateurs que les autres
+    # (ex : 19 utilisateurs et 5 groupes => 5 groupes de 3 et 1 groupe de 4)
+    # 5 + 1 = 6, aka plus que le nombre demandé par l'utilisateur
+    if remainder != 0 and last_group == 'LAST_MIN':
+        return base_size + 1, last_group_size - (max_groups - 1)
+
+    return base_size, last_group_size
+
+
 def index(request):
     # session.get('username') plutôt que session['username'] pour éviter erreur si ['username'] n'existe pas encore
     if request.session.get('username'):
@@ -63,21 +79,7 @@ def group_config(request):
             config.max_groups = max_groups
             config.last_group = last_group
 
-            # Calcul du nombre max de personnes par groupes
-            if max_users % max_groups == 0:
-                group_size = max_users / max_groups
-                last_group_size = group_size
-
-            elif last_group == 'LAST_MAX':
-                group_size = floor(max_users / max_groups)
-                last_group_size = max_users % max_groups
-
-            else:
-                group_size = ceil(max_users / max_groups)
-                last_group_size = group_size + (max_users - (group_size * max_groups))
-
-            print("group_size = ", group_size)
-            print("last_group_size = ", last_group_size)
+            group_size, last_group_size = get_group_sizes(max_users, max_groups, last_group)
 
             config.group_size = group_size
             config.last_group_size = last_group_size
