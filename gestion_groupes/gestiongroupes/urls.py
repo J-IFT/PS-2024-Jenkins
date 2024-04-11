@@ -7,4 +7,5 @@ urlpatterns = [
     path('liste/', views.users_list, name='users_list'),
     path('config/', views.group_config, name='group_config'),
     path('details/<int:group_id>/', views.group_details, name='group_details'),
+    path('creer-groupe/', views.group_create, name='group_create'),
 ]

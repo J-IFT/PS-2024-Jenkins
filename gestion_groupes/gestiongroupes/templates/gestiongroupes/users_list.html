@@ -3,7 +3,7 @@
 {% block content %}
     <h1>Utilisateurs sans groupes</h1>
     <div>
-        <button>Créer un groupe</button>
+        <a href="/creer-groupe/" class="button">Créer un groupe</a>
         <button>J'ai de la chance</button>
         {% if request.session.username == 'admin' %}
             <a href="/config/" class="button">Configurer les groupes</a>

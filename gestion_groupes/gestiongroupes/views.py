@@ -1,7 +1,8 @@
 from math import floor, ceil
+from random import random
 
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from .forms import ConnectionForm, GroupConfigForm
 from .models import GroupConfig
@@ -85,3 +86,10 @@ def group_config(request):
 def group_details(request, group_id):
     context = {'name': "Groupe " + str(group_id), 'members': ['Dylan', 'Eddy']}
     return render(request, 'gestiongroupes/group_details.html', context)
+
+
+def group_create(request):
+    # Vérification des groupes déjà existants
+    # ID du nouveau groupe = dernier ID + 1
+    group_id = floor(random() * 10)
+    return redirect('group_details', group_id)
