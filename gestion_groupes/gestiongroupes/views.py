@@ -1,14 +1,18 @@
+from math import floor, ceil
+
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-
-from math import floor, ceil
 
 from .forms import ConnectionForm, GroupConfigForm
 from .models import GroupConfig
 
 
 def index(request):
+    # session.get('username') plutôt que session['username'] pour éviter erreur si ['username'] n'existe pas encore
     if request.session.get('username'):
+        if request.session['username'] == 'admin':
+            return HttpResponseRedirect('/config/')
+
         return HttpResponseRedirect('/liste/')
 
     if request.method == 'POST':
