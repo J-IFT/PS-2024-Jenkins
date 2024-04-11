@@ -1,5 +1,7 @@
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import render
+
+from math import floor, ceil
 
 from .forms import ConnectionForm, GroupConfigForm
 from .models import GroupConfig
@@ -44,12 +46,36 @@ def group_config(request):
         form = GroupConfigForm(request.POST)
 
         if form.is_valid():
-            config.max_users = request.POST['max_users']
-            config.max_groups = request.POST['max_groups']
-            config.last_group = request.POST['last_group']
+            max_users = int(request.POST['max_users'])
+            max_groups = int(request.POST['max_groups'])
+            last_group = request.POST['last_group']
+
+            config.max_users = max_users
+            config.max_groups = max_groups
+            config.last_group = last_group
+
+            # Calcul du nombre max de personnes par groupes
+            if max_users % max_groups == 0:
+                group_size = max_users / max_groups
+                last_group_size = group_size
+
+            elif last_group == 'LAST_MAX':
+                group_size = floor(max_users / max_groups)
+                last_group_size = max_users % max_groups
+
+            else:
+                group_size = ceil(max_users / max_groups)
+                last_group_size = group_size + (max_users - (group_size * max_groups))
+
+            print("group_size = ", group_size)
+            print("last_group_size = ", last_group_size)
+
+            config.group_size = group_size
+            config.last_group_size = last_group_size
+
             config.save()
 
-    return render(request, 'gestiongroupes/group_config.html', {"form": form})
+    return render(request, 'gestiongroupes/group_config.html', {"form": form, "config": config})
 
 
 def group_details(request, group_id):

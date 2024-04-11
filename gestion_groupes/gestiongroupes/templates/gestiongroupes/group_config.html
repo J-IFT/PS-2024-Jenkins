@@ -6,7 +6,12 @@
             {% csrf_token %}
             {{ form }}
             <button type="submit">Ok</button>
+            <a href="/liste/" class="button">Annuler</a>
         </form>
+    </div>
+    <div class="container">
+        <p>Taille des groupes: {{ config.group_size }}</p>
+        <p>Taille du dernier groupe: {{ config.last_group_size }}</p>
     </div>
 {% endblock %}
 

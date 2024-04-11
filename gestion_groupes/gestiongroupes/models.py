@@ -11,3 +11,5 @@ class GroupConfig(models.Model):
     max_users = models.IntegerField(default=25)
     max_groups = models.IntegerField(default=5)
     last_group = models.CharField(max_length=8, choices=LAST_GROUP_CHOICES, default=LAST_GROUP_CHOICES[0][0])
+    group_size = models.IntegerField(default=5)
+    last_group_size = models.IntegerField(default=5)
