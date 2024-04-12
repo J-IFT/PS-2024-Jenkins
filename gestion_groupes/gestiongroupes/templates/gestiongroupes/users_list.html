@@ -2,14 +2,13 @@
 
 {% block content %}
     <h1>Utilisateurs sans groupes</h1>
-    <div>
+    <div class="flow">
         <a href="/creer-groupe/" class="button">Créer un groupe</a>
 
         <form action="/liste/" method="post">
             {% csrf_token %}
+            <button type="submit" class="button">Rejoindre le groupe</button>
             <input type="number" name="join_id" id="join_id">
-
-            <button type="submit">Rejoindre le groupe</button>
         </form>
 
         {% if request.session.username == 'admin' %}

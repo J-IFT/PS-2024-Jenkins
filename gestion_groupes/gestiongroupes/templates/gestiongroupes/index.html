@@ -3,13 +3,15 @@
 {% block title %}Connexion{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1>Page de connexion</h1>
-    <form action="/" method="post">
-        {% csrf_token %}
-        {{ form }}
-        <button type="submit">Se connecter</button>
-    </form>
-</div>
+    <h1>Connexion</h1>
+    <div class="container">
+        <div class="card">
+            <form action="/" method="post" class="flow login-form">
+                {% csrf_token %}
+                {{ form }}
+                <button type="submit" class="button" data-color="primary">Se connecter</button>
+            </form>
+        </div>
+    </div>
 {% endblock %}
 
