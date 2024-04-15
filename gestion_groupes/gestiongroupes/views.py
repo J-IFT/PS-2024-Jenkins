@@ -5,8 +5,9 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 
 from .forms import ConnectionForm, GroupConfigForm
-from .models import GroupConfig
+from .models import GroupConfig, Groupe, Utilisateur
 
+from .tools import init
 
 def get_group_sizes(max_users, max_groups, last_group):
     base_size = max_users // max_groups
@@ -35,8 +36,11 @@ def index(request):
     if request.method == 'POST':
         form = ConnectionForm(request.POST)
         if form.is_valid():
+            # Création User
             username = form.cleaned_data['username']
             request.session['username'] = username
+            utilisateur = Utilisateur.objects.create(nom=username)
+            utilisateur.save()
             if username == 'admin':
                 return HttpResponseRedirect('/config/')
 
@@ -48,15 +52,44 @@ def index(request):
 
 
 def users_list(request):
+    # Initialisation utilisateur
+    current_user = init(request)
+    if current_user == False:
+        return HttpResponseRedirect('/')
+    
+    # Rejoint un groupe
     if request.method == 'POST':
         join_id = request.POST['join_id']
-        return redirect('group_details', join_id)
+        return redirect('group_join', join_id)
+    
+    # Utilisateurs sans groupes
+    users = Utilisateur.objects.filter(groupes=None)
+    users_list = []
+    for utilisateur in users:
+        if utilisateur.nom != current_user.nom:
+            users_list.append(utilisateur.nom)
 
-    context = {'users': ['Alice', 'Bob', 'Charlie']}
+    # Groupes joignables 
+    groupes = Groupe.objects.all()
+    infos_groupes = []
+    for groupe in groupes:
+        infos_groupes.append({
+            'id': groupe.id,
+            'code': groupe.code,
+            'nombre_membres': groupe.utilisateurs.count()
+        })
+    print(infos_groupes)
+    # Fin
+    context = {'users': users_list, 'infos_groupes':infos_groupes}
     return render(request, 'gestiongroupes/users_list.html', context)
 
 
 def group_config(request):
+    # Initialisation utilisateur
+    current_user = init(request)
+    if current_user == False:
+        return HttpResponseRedirect('/')
+    
     try:
         config = GroupConfig.objects.get(pk=1)
     except GroupConfig.DoesNotExist:
@@ -90,12 +123,52 @@ def group_config(request):
 
 
 def group_details(request, group_id):
-    context = {'name': "Groupe " + str(group_id), 'members': ['Dylan', 'Eddy']}
+    # Initialisation utilisateur
+    current_user = init(request)
+    if current_user == False:
+        return HttpResponseRedirect('/')
+    
+    # Initialisation groupe
+    try:
+        groupe = Groupe.objects.get(id=group_id)
+        members = list(groupe.utilisateurs.values_list('nom', flat=True))
+        if current_user not in groupe.utilisateurs.all():
+            return HttpResponseRedirect('/liste/')
+    except (Utilisateur.DoesNotExist, Groupe.DoesNotExist):
+        return HttpResponseRedirect('/liste/')
+
+    # Quitter le groupe 
+    if 'quit' in request.GET and request.GET['quit'] == '1':
+        groupe.utilisateurs.remove(current_user)
+        if groupe.utilisateurs.count() == 0:
+            groupe.delete()
+        return HttpResponseRedirect('/liste/')
+
+    context = {'name': "Groupe : " + str(groupe.code), 'members': members}
     return render(request, 'gestiongroupes/group_details.html', context)
 
 
 def group_create(request):
-    # Vérification des groupes déjà existants
-    # ID du nouveau groupe = dernier ID + 1
-    group_id = floor(random() * 10)
-    return redirect('group_details', group_id)
+    # Initialisation utilisateur
+    current_user = init(request)
+    if current_user == False:
+        return HttpResponseRedirect('/')
+    
+    # Création groupe
+    groupe = Groupe.objects.create()
+    groupe.utilisateurs.add(current_user)
+    groupe.save()
+    return redirect('group_join', groupe.id)
+
+def group_join(request, group_id):
+    # Initialisation utilisateur
+    current_user = init(request)
+    if current_user == False:
+        return HttpResponseRedirect('/')
+
+    # On ajoute au groupe
+    groupe = Groupe.objects.get(id=group_id)
+    groupe.utilisateurs.add(current_user)
+        
+    return redirect('group_details', groupe.id)
+    

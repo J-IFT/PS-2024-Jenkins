@@ -8,7 +8,11 @@
         <form action="/liste/" method="post">
             {% csrf_token %}
             <button type="submit" class="button">Rejoindre le groupe</button>
-            <input type="number" name="join_id" id="join_id">
+            <select name="join_id"  id="join_id">
+                {% for groupe in infos_groupes %}
+                    <option value="{{ groupe.id }}">{{ groupe.code }} ({{ groupe.nombre_membres }})</option>
+                {% endfor %}
+            </select>
         </form>
 
         {% if request.session.username == 'admin' %}
