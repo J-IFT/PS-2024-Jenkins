@@ -3,11 +3,12 @@ from random import random
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
+from django.db.models import Count
 
 from .forms import ConnectionForm, GroupConfigForm
 from .models import GroupConfig, Groupe, Utilisateur
 
-from .tools import init
+from .tools import init, get_group_config, get_nb_group_with_max_members
 
 def get_group_sizes(max_users, max_groups, last_group):
     base_size = max_users // max_groups
@@ -27,24 +28,25 @@ def get_group_sizes(max_users, max_groups, last_group):
 
 def index(request):
     # session.get('username') plutôt que session['username'] pour éviter erreur si ['username'] n'existe pas encore
-    if request.session.get('username'):
-        if request.session['username'] == 'admin':
-            return HttpResponseRedirect('/config/')
-
-        return HttpResponseRedirect('/liste/')
 
     if request.method == 'POST':
         form = ConnectionForm(request.POST)
         if form.is_valid():
             # Création User
             username = form.cleaned_data['username']
-            request.session['username'] = username
             utilisateur = Utilisateur.objects.create(nom=username)
+            request.session['user_id'] = utilisateur.id            
             utilisateur.save()
             if username == 'admin':
                 return HttpResponseRedirect('/config/')
-
             return HttpResponseRedirect('/liste/')
+    
+    current_user = init(request)
+    if current_user != False:
+        if current_user.nom == 'admin':
+            return HttpResponseRedirect('/config/')
+
+        return HttpResponseRedirect('/liste/')
 
     form = ConnectionForm()
 
@@ -57,10 +59,15 @@ def users_list(request):
     if current_user == False:
         return HttpResponseRedirect('/')
     
+    # Groupe plein
+    message = ''
+    if 'groupe_plein' in request.GET and request.GET['groupe_plein'] == '1':
+        message = 'Le groupe est plein.'
+    
     # Rejoint un groupe
     if request.method == 'POST':
-        join_id = request.POST['join_id']
-        return redirect('group_join', join_id)
+        code = request.POST['code']
+        return redirect('group_join', code)
     
     # Utilisateurs sans groupes
     users = Utilisateur.objects.filter(groupes=None)
@@ -70,7 +77,7 @@ def users_list(request):
             users_list.append(utilisateur.nom)
 
     # Groupes joignables 
-    groupes = Groupe.objects.all()
+    groupes = Groupe.objects.annotate(num_utilisateurs=Count('utilisateurs')).filter(num_utilisateurs__gte=2)
     infos_groupes = []
     for groupe in groupes:
         infos_groupes.append({
@@ -80,7 +87,7 @@ def users_list(request):
         })
     print(infos_groupes)
     # Fin
-    context = {'users': users_list, 'infos_groupes':infos_groupes}
+    context = {'users': users_list, 'infos_groupes':infos_groupes, 'message':message}
     return render(request, 'gestiongroupes/users_list.html', context)
 
 
@@ -90,10 +97,8 @@ def group_config(request):
     if current_user == False:
         return HttpResponseRedirect('/')
     
-    try:
-        config = GroupConfig.objects.get(pk=1)
-    except GroupConfig.DoesNotExist:
-        config = GroupConfig()
+    # On récupére la config des groupes
+    config = get_group_config()
 
     form = GroupConfigForm()
     form.fields['max_users'].initial = config.max_users
@@ -144,7 +149,10 @@ def group_details(request, group_id):
             groupe.delete()
         return HttpResponseRedirect('/liste/')
 
-    context = {'name': "Groupe : " + str(groupe.code), 'members': members}
+    # Lien du groupe
+    group_url = request.scheme + '://' + request.get_host() + '/join-groupe/' + groupe.code
+
+    context = {'name': "Groupe : " + str(groupe.code), 'members': members, 'url':group_url}
     return render(request, 'gestiongroupes/group_details.html', context)
 
 
@@ -158,17 +166,28 @@ def group_create(request):
     groupe = Groupe.objects.create()
     groupe.utilisateurs.add(current_user)
     groupe.save()
-    return redirect('group_join', groupe.id)
+    return redirect('group_join', groupe.code)
 
-def group_join(request, group_id):
+def group_join(request, group_code):
+    groupe = Groupe.objects.get(code=group_code)
+
     # Initialisation utilisateur
     current_user = init(request)
     if current_user == False:
         return HttpResponseRedirect('/')
 
-    # On ajoute au groupe
-    groupe = Groupe.objects.get(id=group_id)
-    groupe.utilisateurs.add(current_user)
+    # On vérifie s'il reste de la place dans le groupe
+    config = get_group_config()
+    max_size = config.group_size
+    if(get_nb_group_with_max_members() >= config.max_groups-1):
+        # On dépasse le nombre de groupe de taille max 
+        max_size = config.last_group_size
+    if(groupe.utilisateurs.count() >= max_size):
+        print('groupe plein')
+        return HttpResponseRedirect('/liste/?groupe_plein=1')
+    else:
+        # On ajoute au groupe
+        groupe.utilisateurs.add(current_user)
         
     return redirect('group_details', groupe.id)
     
