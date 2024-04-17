@@ -9,9 +9,8 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-import time
 
-class TestUserconnexion():
+class TestAdminconnexion():
   def setup_method(self, method):
     self.driver = webdriver.Chrome()
     self.vars = {}
@@ -19,14 +18,16 @@ class TestUserconnexion():
   def teardown_method(self, method):
     self.driver.quit()
   
-  def test_userconnexion(self):
+  def test_adminconnexion(self):
     self.driver.get("http://127.0.0.1:8000/")
     self.driver.set_window_size(1920, 1080)
     self.driver.find_element(By.ID, "id_username").click()
     time.sleep(2)
-    self.driver.find_element(By.ID, "id_username").send_keys("juliette")
+    self.driver.find_element(By.ID, "id_username").send_keys("admin")
     time.sleep(2)
     self.driver.find_element(By.CSS_SELECTOR, ".button").click()
+    time.sleep(2)
+    self.driver.find_element(By.LINK_TEXT, "Annuler").click()
     time.sleep(2)
     self.driver.close()
   
