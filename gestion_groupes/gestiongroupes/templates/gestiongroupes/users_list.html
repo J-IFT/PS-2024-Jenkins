@@ -14,12 +14,13 @@
                 {% endfor %}
             </select>
         </form>
+
+		{% if current_user.nom == 'admin' %}
+			<a href="/config/" class="button">Configurer les groupes</a>
+		{% endif %}
+
         {% if message %}
             <div id="alert">{{ message }}</div>
-        {% endif %}
-
-        {% if request.session.username == 'admin' %}
-            <a href="/config/" class="button">Configurer les groupes</a>
         {% endif %}
     </div>
     <ul>
