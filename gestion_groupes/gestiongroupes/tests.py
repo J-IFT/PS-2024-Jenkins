@@ -22,7 +22,7 @@ class GroupConfigTestCase(TestCase):
         self.assertEqual(GroupConfig.get_group_sizes(21, 5, 'LAST_MIN'), (5, 1))
 
 
-class ToolsTestCase(TestCase):
+class ToolsNbGroupTestCase(TestCase):
     def setUp(self):
         GroupConfig.objects.create(max_users=19, max_groups=5, last_group='LAST_MAX', group_size=3, last_group_size=7)
 
