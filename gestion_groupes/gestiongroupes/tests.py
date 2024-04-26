@@ -62,3 +62,17 @@ class ToolsNbGroupTestCase(TestCase):
         self.group.utilisateurs.add(Utilisateur.objects.create(nom="Dave"))
 
         self.assertEqual(get_nb_group_with_max_members(), False)
+
+
+class ToolsGetGroupConfigTestCase(TestCase):
+    def test_group_config_does_not_exist(self):
+        default_group_config = GroupConfig()
+        group_config = get_group_config()
+        # Compare les données des objets plutôt que les objets directement car ils apparaissent différents
+        self.assertEqual(
+            (group_config.max_groups, group_config.max_users, group_config.last_group),
+            (default_group_config.max_groups, default_group_config.max_users, default_group_config.last_group))
+
+    def test_group_config_exists(self):
+        group_config = GroupConfig.objects.create(max_users=19, max_groups=5, last_group='LAST_MAX', group_size=3, last_group_size=7)
+        self.assertEqual(get_group_config(), group_config)
