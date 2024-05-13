@@ -40,4 +40,4 @@ class Groupe(models.Model):
 
 
 class Utilisateur(models.Model):
-    nom = models.CharField(max_length=40)
+    nom = models.CharField(max_length=40)oreignKey(Groupe, on_delete=models.CASCADE)
