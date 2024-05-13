@@ -56,6 +56,13 @@ Rendus attendus :
 + Python
 
 
+### Commandes utiles
+
+Lancer jenkins à partir du .war
+```bash
+java -jar jenkins.war
+```
+
 
 ## 🌸 Merci !
 © J-IFT
