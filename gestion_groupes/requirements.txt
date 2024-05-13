@@ -1,0 +1,5 @@
+pip==24.0
+django==5.0.3
+wheel==0.43.0
+sqlparse==0.5.0
+asgiref==3.8.1
