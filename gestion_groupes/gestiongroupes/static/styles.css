@@ -1,0 +1,202 @@
+/* styles.css */
+
+/* Variables */
+:root {
+    /* Tailles de police */
+    --text-size-small: clamp(0.8333rem, 0.7488rem + 0.4228vi, 1.05rem);
+    --text-size-base: clamp(1rem, 0.878rem + 0.6098vi, 1.3125rem);
+    --text-size-heading-4: clamp(1.44rem, 1.2016rem + 1.1918vi, 2.0508rem);
+    --text-size-heading-3: clamp(1.728rem, 1.402rem + 1.6302vi, 2.5635rem);
+    --text-size-heading-2: clamp(2.0736rem, 1.6323rem + 2.2063vi, 3.2043rem);
+    --text-size-heading-1: clamp(2.4883rem, 1.8963rem + 2.9602vi, 4.0054rem);
+
+    /* Espaces */
+    --space-xs: clamp(0.75rem, 0.6524rem + 0.4878vi, 1rem);
+    --space-s: clamp(1rem, 0.878rem + 0.6098vi, 1.3125rem);
+    --space-m: clamp(1.5rem, 1.3049rem + 0.9756vi, 2rem);
+    --space-l: clamp(2rem, 1.7561rem + 1.2195vi, 2.625rem);
+    --space-xl: clamp(3rem, 2.6341rem + 1.8293vi, 3.9375rem);
+
+    /* Lettrage */
+    --ff-primary: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;
+    --leading: 1.5;
+    --leading-interactable: 1.1;
+
+    /* Couleurs */
+    --clr-text: #4c4f69;
+    --clr-base: #eff1f5;
+    --clr-mantle: #e6e9ef;
+    --clr-surface-0: #ccd0da;
+    --clr-surface-1: #bcc0cc;
+    --clr-primary: deeppink;
+    --clr-primary-interact: #e01f8d;
+    --clr-error: red;
+    --clr-success: lime;
+
+}
+
+/* Reset */
+/* Box sizing rules */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* Prevent font size inflation */
+html {
+    -moz-text-size-adjust: none;
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
+}
+
+/* Remove default margin in favour of better control in authored CSS */
+body, h1, h2, h3, h4, p,
+figure, blockquote, dl, dd {
+    margin-block-end: 0;
+}
+
+/* Remove list styles on ul, ol elements with a list role, which suggests default styling will be removed */
+ul[role='list'],
+ol[role='list'] {
+    list-style: none;
+}
+
+/* Set core body defaults */
+body {
+    min-height: 100vh;
+    line-height: var(--leading);
+}
+
+/* Set shorter line heights on headings and interactive elements */
+h1, h2, h3, h4,
+button, input, label {
+    line-height: var(--leading-interactable);
+}
+
+/* Balance text wrapping on headings */
+h1, h2,
+h3, h4 {
+    text-wrap: balance;
+}
+
+/* A elements that don't have a class get default styles */
+a:not([class]) {
+    text-decoration-skip-ink: auto;
+    color: currentColor;
+}
+
+/* Make images easier to work with */
+img,
+picture {
+    max-width: 100%;
+    display: block;
+}
+
+/* Inherit fonts for inputs and buttons */
+input, button,
+textarea, select {
+    font-family: inherit;
+    font-size: inherit;
+}
+
+/* Make sure textareas without a rows attribute are not tiny */
+textarea:not([rows]) {
+    min-height: 10em;
+}
+
+/* Anything that has been anchored to should have extra scroll margin */
+:target {
+    scroll-margin-block: 5ex;
+}
+
+
+/* Style général */
+body {
+    font-family: var(--ff-primary);
+    font-size: var(--text-size-base);
+    line-height: var(--leading);
+    background-color: var(--clr-base);
+    color: var(--clr-text);
+}
+
+h1 {
+    text-align: center;
+}
+
+input[type="text"],
+input[type="password"] {
+    padding: var(--space-xs);
+    border: 1px solid var(--clr-mantle);
+    border-radius: 5px;
+}
+
+button, .button {
+    display: inline-flex;
+    padding: var(--space-xs) var(--space-s);
+    text-decoration: none;
+    line-height: var(--leading-interactable);
+    background-color: var(--button-bg, var(--clr-surface-0));
+    color: var(--button-text, var(--clr-text));
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+
+  /*  display: inline-block;*/
+  /*padding: 0.8em 1.5em;*/
+  /*line-height: var(--bs-btn-line-height);*/
+  /*color: var(--bs-btn-color);*/
+  /*text-align: center;*/
+  /*text-decoration: none;*/
+  /*vertical-align: middle;*/
+}
+
+button:hover, .button:hover {
+    background-color: var(--button-bg-interact, var(--clr-surface-1));
+}
+
+.button[data-color="primary"] {
+    --button-bg: var(--clr-primary);
+    --button-bg-interact: var(--clr-primary-interact);
+    --button-text: var(--clr-base)
+}
+
+a:not[class] {
+    color: var(--clr-primary);
+}
+
+a:not[class]:hover {
+    color: var(--clr-primary-interact);
+}
+
+
+/* Responsive design */
+@media screen and (max-width: 600px) {
+    .container {
+        width: 90%;
+    }
+}
+
+
+/* Utilities */
+.flow >  * + * {
+    margin-top: var(--flow-space, 1em);
+}
+
+/* Blocks */
+.container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: var(--space-m);
+}
+
+.card {
+    background-color: var(--clr-mantle);
+    padding: var(--space-s);
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+}
+
+.login-form input, .login-form button{
+    width: 100%;
+}

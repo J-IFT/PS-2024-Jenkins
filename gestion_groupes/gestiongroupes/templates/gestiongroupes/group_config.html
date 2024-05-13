@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Configuration{% endblock %}
+
+{% block content %}
+    <h1>Configuration des groupes</h1>
+    <div class="flow container">
+        <form action="/config/" method="post" class="flow">
+            {% csrf_token %}
+            {{ form }}
+            <a href="/liste/" class="button">Annuler</a>
+            <button type="submit" class="button" data-color="primary">Ok</button>
+        </form>
+        <p>Taille des groupes: {{ config.group_size }}</p>
+        <p>Taille du dernier groupe: {{ config.last_group_size }}</p>
+    </div>
+{% endblock %}
+

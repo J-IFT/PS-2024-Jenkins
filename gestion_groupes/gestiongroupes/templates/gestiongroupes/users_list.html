@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Utilisateurs sans groupes</h1>
+    <div class="flow">
+        <a href="/creer-groupe/" class="button">Créer un groupe</a>
+
+        <form action="/liste/" method="post">
+            {% csrf_token %}
+            <button type="submit" class="button">Rejoindre le groupe</button>
+            <select name="code"  id="code">
+                {% for groupe in infos_groupes %}
+                    <option value="{{ groupe.code }}">{{ groupe.code }} ({{ groupe.nombre_membres }})</option>
+                {% endfor %}
+            </select>
+        </form>
+
+		{% if current_user.nom == 'admin' %}
+			<a href="/config/" class="button">Configurer les groupes</a>
+		{% endif %}
+
+        {% if message %}
+            <div id="alert">{{ message }}</div>
+        {% endif %}
+    </div>
+    <ul>
+        {% for user in users %}
+            <li>{{ user }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+

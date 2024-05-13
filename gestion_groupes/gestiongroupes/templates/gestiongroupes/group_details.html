@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}{{ name }}{% endblock %}
+
+{% block content %}
+    <h1>{{ name }}</h1>
+    <div>
+        <a href="?quit=1" class="button">Quitter</a>
+    </div>
+    <ul>
+        {% for member in members %}
+            <li>{{ member }}</li>
+        {% endfor %}
+    </ul>
+    <div id="link-container">
+        <button id="link" onclick="copyLink()">{{ url }}</button>
+    </div>
+    
+    <script>
+        function copyLink() {
+            // Sélectionne le texte dans la balise span
+            var link = document.getElementById("link");
+            var range = document.createRange();
+            range.selectNode(link);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+        
+            // Essaye de copier le texte sélectionné
+            try {
+                var successful = document.execCommand('copy');
+            } catch(err) {
+                console.log('Erreur lors de la copie du lien : ', err);
+            }
+        
+            // Efface la sélection
+            window.getSelection().removeAllRanges();
+        }
+        </script>
+{% endblock %}
+
