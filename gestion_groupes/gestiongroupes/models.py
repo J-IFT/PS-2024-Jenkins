@@ -40,4 +40,5 @@ class Groupe(models.Model):
 
 
 class Utilisateur(models.Model):
-    nom = models.CharField(max_length=40)oreignKey(Groupe, on_delete=models.CASCADE)
+    nom = models.CharField(max_length=40)
+    groupe = models.ForeignKey(Groupe, on_delete=models.CASCADE)
