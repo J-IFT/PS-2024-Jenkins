@@ -1,6 +1,6 @@
 from django.http import HttpResponseRedirect
 from django.db.models import Count
-
+from collections import defaultdict
 from .models import GroupConfig, Groupe, Utilisateur
 
 def init(request):
@@ -19,7 +19,7 @@ def init(request):
         current_user.delete()
         del request.session['user_id']
         return False
-    
+
     return current_user
 
 def get_group_config():
@@ -32,14 +32,17 @@ def get_group_config():
 
 def get_nb_group_with_max_members():
     config = get_group_config()
-    groupes_counts = Groupe.objects.annotate(num_utilisateurs=Count('utilisateurs'))
-    counts_dict = (
-        groupes_counts
-        .values('num_utilisateurs')
-        .annotate(num_groupes=Count('id', distinct=True))
-    )
-    resultats = {item['num_utilisateurs']: item['num_groupes'] for item in counts_dict}
+    groupes = Groupe.objects.all()
 
-    print(resultats)
-    return resultats.get(config.group_size,False)
-    
+    groupes_utilisateurs = defaultdict(int)
+
+	# On remplis le dictionnaire avec le nombre de groupe par nombre de membres de ces groupes
+    for groupe in groupes:
+        nombre_utilisateurs = groupe.utilisateurs.count()
+        groupes_utilisateurs[nombre_utilisateurs] += 1
+
+    # On retourne le nombre de groupe ayant le nombre max de membres
+    if config.group_size in groupes_utilisateurs:
+        return groupes_utilisateurs[config.group_size]
+    else:
+        return False
